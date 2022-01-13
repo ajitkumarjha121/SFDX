@@ -1,0 +1,8 @@
+Skill Based Routing Rules Deployment
+Migration > Retrieve > Unpackaged Manifest: Choose File (package.xml file where metadata is mentioned for the components)
+
+Check: Single Package
+
+Migration > Deploy > Choose a ZIP file to deploy.
+Check: Rollback On Error and Single Package
+Next

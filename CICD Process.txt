@@ -1,0 +1,44 @@
+CICD Pipeline tesitng process below:
+
+Development Org: pseudoprep
+https://eon--pseudoprep.cs101.my.salesforce.com
+Develop & Extract Components from pseudoprep org in SFDX format through VSCode
+
+Process:-1
+FeatureBranch_1 from integration
+pushed changes to FeatureBranch_1
+Raise merge request from Feature to integration
+Validation Job triggered >> validated Against FT instance
+Merge to Integration 
+Job200 triggered >> Deploy changes to FT instance 
+
+Process:-2
+FeatureBranch_2 from Develop 
+pushed changes to FeatureBranch_2
+Raise merge request from Feature to Develop
+Validation Job triggered >> validated Against SIT/UAT instance
+Merge to Develop Branch 
+**Job400 Triggered >> Validated Against SIT/UAT Instance + Generates Artifactory Storage
+
+ARTEFACT URL:-
+https://repo.eon-cds.de/artifactory/sfdx-digatt-maven-local/com/eon/salesforce/sfdc
+Username : build-da
+Pwd: fWPJAFCQDcuUgRjHJuvDrVza
+
+Process:-3
+Create New Branch - "release_v10.0" From Develop Branch
+
+Process:-4 https://git.eon-cds.de/hcl-da/sfdc-test/sfdx_450 >> Manually Execute
+sfdx_450 >> RELEASE_BRANCH = "release_v10.0" >> Deploy to SIT/UAT Org + Creates Release Artefact
+
+Process:-5 https://git.eon-cds.de/hcl-da/sfdc-test/sfdx_500 >> Manually Execute
+sfdx_500 >> RELEASE_ART = "v4.1-20190916-1527" >> Deploy to Pre-Prod Org
+
+Process:-6 https://git.eon-cds.de/hcl-da/sfdc-test/sfdx-600
+sfdx_600 >> RELEASE_ART = "v4.1-20190916-1527" >> Deploy to Production Org
+
+Git Commands:-
+git fetch origin
+git checkout -b "aj_int_rd1.0" "origin/aj_int_rd1.0"
+git branch
+git push origin HEAD:"aj_int_rd1.0"

@@ -1,0 +1,45 @@
+global class BulkUserUpdateBatch implements Database.Batchable<sObject>
+{
+    global Database.QueryLocator start(Database.BatchableContext BC){
+        List<String> lst = new List<String>();
+        lst.add('0051v000009EjFkAAK');
+        lst.add('0051v000006qHPWAA2');
+        lst.add('0051v000006pBNwAAM');
+        lst.add('0051v000006xMRMAA2');
+        lst.add('0051v0000065Z3WAAU');
+        lst.add('0051v000006oyzdAAA');
+        lst.add('0051v0000065bDTAAY');
+        lst.add('0051v000009i91NAAQ');
+        lst.add('0051v000009EjIKAA0');
+        lst.add('0051v00000600F4AAI');
+        lst.add('0051v000005mgRkAAI');
+        lst.add('0050Y000002svh7QAA');
+        lst.add('0050Y000002wPo5QAE');
+        lst.add('0050Y000003lNSrQAM');
+        lst.add('0050Y000003lP6OQAU');
+        lst.add('0050Y000003m3RSQAY');
+        lst.add('0051v000005zz7jAAA');
+        lst.add('0050Y000002V5bwQAC');
+        lst.add('0050Y000003lPm0QAE');
+        lst.add('0051v000006nGWLAA2');
+        
+        String type ='Standard';
+        String query = 'select id, isActive from user where isActive = true and usertype =:type and id not in:lst';
+        return Database.getQueryLocator(query);
+    }
+    
+    global void execute(Database.BatchableContext BC, List<User> lstUser){
+        List<User>lstUserToUpdate = new List<User>();
+        for(User objUser :lstUser ){
+            objUser.isActive = false;
+            lstUserToUpdate.add(objUser);
+        }
+        if(!lstUserToUpdate.isEmpty()){
+            update lstUserToUpdate;
+        }    
+    }
+    
+    global void finish(Database.BatchableContext BC){
+        system.debug('Batch Completed!!!');   
+    }
+}

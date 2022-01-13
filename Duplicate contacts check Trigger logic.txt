@@ -1,0 +1,88 @@
+Below logic is required to run in any full copy sandbox after recent refresh from production,
+
+Created 2 custom fields on contact object in Mig01 sandbox,
+1. update_completed__c - check box
+2. Duplicate_Check__c - text field.
+
+Below is the trigger logic, if we perform dummy update on all contacts respective fields will populate with duplicate values.
+
+
+trigger DA_ContactTrigger on Contact (before update) {
+        set<string> allEgcids = new set<string>();
+        set<string> allBillingIds = new set<string>();
+        set<string> allEmails = new set<string>();
+        set<Id> duplicateIds = new set<Id>();
+        Map<string,string> dupchkMap = new Map<string,string>();
+        list<contact> allContactsToUpdate = new list<contact>();   
+        for(contact c : Trigger.new) {
+           c.update_completed__c = TRUE;
+           
+           if((c.Duplicate_Check__c == Trigger.oldMap.get(c.id).Duplicate_Check__c) && c.email != null){
+               if(dupchkMap.containskey(c.email)){
+                   c.Duplicate_Check__c = 'EmailId Duplicate';
+               }
+               else{
+                   dupchkMap.put(c.email,c.Id);
+                   allEmails.add(c.email);
+               }                  
+           }
+
+           if((c.Duplicate_Check__c == Trigger.oldMap.get(c.id).Duplicate_Check__c) && c.Billing_ID_Contacts__c != null){
+               if(dupchkMap.containskey(c.Billing_ID_Contacts__c)){
+                   c.Duplicate_Check__c = 'BillingId Duplicate';
+               }
+               else{
+                   dupchkMap.put(c.Billing_ID_Contacts__c,c.Id);
+                   allBillingIds.add(c.Billing_ID_Contacts__c);
+               }               
+           }
+           
+           if((c.Duplicate_Check__c == Trigger.oldMap.get(c.id).Duplicate_Check__c) && c.DA_EGCID__c != null){
+               if(dupchkMap.containskey(c.DA_EGCID__c)){
+                   c.Duplicate_Check__c = 'EGCID Duplicate';
+               }
+               else{
+                   dupchkMap.put(c.DA_EGCID__c,c.Id);
+                   allEgcids.add(c.DA_EGCID__c);
+               }
+           }
+           
+        }
+        
+        If(allEgcids != null && allEgcids.size() > 0){
+            list<contact> dupcontactEgcid = [select id,Duplicate_Check__c from contact where Id NOT IN :Trigger.newMap.keySet() AND (Duplicate_Check__c = null OR Duplicate_Check__c ='BillingId Duplicate' OR Duplicate_Check__c ='EmailId Duplicate') AND DA_EGCID__c IN :allEgcids];
+            If(dupcontactEgcid != null && dupcontactEgcid.size() > 0){
+            for(contact cc: dupcontactEgcid){
+                cc.Duplicate_Check__c = 'EGCID Duplicate';
+                duplicateIds.add(cc.id);
+                allContactsToUpdate.add(cc);
+            }
+            }
+        }
+        
+        If(allBillingIds != null  && allBillingIds.size() > 0){
+            list<contact> dupcontactBilling = [select id,Duplicate_Check__c from contact where Id NOT IN :Trigger.newMap.keySet() AND Id NOT IN:duplicateIds AND (Duplicate_Check__c = null OR Duplicate_Check__c ='EmailId Duplicate') AND Billing_ID_Contacts__c IN :allBillingIds];
+            If(dupcontactBilling != null && dupcontactBilling.size() > 0){
+            for(contact cc: dupcontactBilling){
+                cc.Duplicate_Check__c = 'BillingId Duplicate';
+                duplicateIds.add(cc.id);
+                allContactsToUpdate.add(cc);
+            }
+            }          
+        }
+        
+        If(allEmails != null && allEmails.size() > 0){
+            list<contact> dupcontactemail = [select id,Duplicate_Check__c from contact where Id NOT IN :Trigger.newMap.keySet() AND Id NOT IN:duplicateIds AND Duplicate_Check__c = null AND email IN :allEmails];      
+            If(dupcontactemail != null && dupcontactemail.size() > 0){
+            for(contact cc: dupcontactemail){
+                cc.Duplicate_Check__c = 'EmailId Duplicate';
+                duplicateIds.add(cc.id);
+                allContactsToUpdate.add(cc);
+            }
+            }
+        }
+        
+        If(allContactsToUpdate != null && allContactsToUpdate.size() > 0){
+            update allContactsToUpdate;
+        }       
+    }  

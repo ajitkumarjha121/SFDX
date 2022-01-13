@@ -1,0 +1,37 @@
+Imp Standard Objects of Sales Cloud:
+Campaign
+Lead
+Account
+Contact
+Opportunity
+Product
+Price Book
+Contract
+Orders
+
+Campaign: Basically used to store the information of Campaign we do, for marketing of our business, to generate new leads or to do some brand building.
+          and we want to store all these details into CRM or Sales cloud.
+
+Lead: Basically used to store the information of the potential customers of our business. 
+      Example: When selling a Camera: Potential customers will be Photographer, Videographer or who are interested into Photography/Vedeography.
+
+Account: Basically used to store the information of the potential customers, basically prospects with whom we are working on to a 
+         deal to get it closed or to sell something to them. So we store the information of the particular company or individual into Account if they are
+         our prospects or customers.
+
+Contact: we store the information of the key executives/peoples working into that particular account into Contacts.
+
+Opportunity: used to store the information of the deals that are happening or happened with our customers or prospects.
+
+Product:  used to store the information of the products or the services we are selling as a business, and we can include those products into and
+		  opportunity. 
+
+Price Book: used to store the information of the different prices that we have for the same product. Its basically list which store the information
+			of the products and their respective prices, which will automatically be shown onto the particular Opportunity,
+			which will automatically be included on the opportunity as an amount of that particular Product.
+
+Quote: we can provide different Quotes for a single deal. 
+
+Contract: we can store the information of the Contract and Duration.
+
+			

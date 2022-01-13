@@ -1,0 +1,9 @@
+Done and Ready in Agile
+
+Definition of Done
+
+Each Scrum Team has its own Definition of Done or consistent acceptance criteria across all User Stories.  A Definition of Done drives the quality of work and is used to assess when a User Story has been completed. 
+
+Definition of Ready
+ 
+Having a Definition of Ready means that stories must be immediately actionable. The Team must be able to determine what needs to be done and the amount of work required to complete the User Story or PBI. The Team must understand the "done" criteria and what tests will be performed to demonstrate that the story is complete. "Ready" stories should be clear, concise, and most importantly, actionable.

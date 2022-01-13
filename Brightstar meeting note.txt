@@ -1,0 +1,19 @@
+lead converted to contact for related account.
+
+Contact: making one contact primary for the lead
+
+Opportunity: changing stages (Prospecting, proposalm negotiation , won opportunity) 
+
+changing record type for the Opportunity
+
+Qualification process: Its a criteria, once filled, Print form will be enabled and PDF print format will be ready for printing.
+
+at least one product is required for an Opportunity to get stages changed.
+
+
+Opportunity Plan:
+
+
+Approval meeting management:
+
+ 

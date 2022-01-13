@@ -1,0 +1,201 @@
+contact MergeContact=[select id,accountid FROM contact where id = '02i3O000004C087QAC'];       // contact to be merged 
+contact ProdRequiredContact =[select id,accountid FROM contact where id = '0033O00000LfqK2']; //  contact to be merged into
+
+system.debug('ProdRequiredContact: '+ProdRequiredContact);
+
+If(ProdRequiredContact != null && ProdRequiredContact.AccountId !=null && ProdRequiredContact.id != null && MergeContact != null && MergeContact.AccountId !=null && MergeContact.id != null){
+
+String ReplaceMergeAccount=MergeContact.AccountId;
+String ReplaceMergeContact=MergeContact.id;
+
+List<Asset> listReplaceAssets = [select id, AccountId,ContactId,Billing_ID__c,Customer_Contract_Parent_Assets__c,NE__BILLING_ACCOUNT__C, NE__SERVICE_ACCOUNT__C FROM Asset where ContactId =: ReplaceMergeContact or Accountid =:ReplaceMergeAccount];
+List<Asset> updateAssetsList = new List<Asset>();
+List<DA_ContactContractRelationship__c> createCCRList = new List<DA_ContactContractRelationship__c>();
+for(Asset MergeAsset: listReplaceAssets){
+                                MergeAsset.AccountId  = ProdRequiredContact.AccountId;
+								MergeAsset.Customer_Contract_Parent_Assets__c  = ProdRequiredContact.AccountId;
+								MergeAsset.NE__BILLING_ACCOUNT__C  = ProdRequiredContact.AccountId;
+								MergeAsset.NE__SERVICE_ACCOUNT__C  = ProdRequiredContact.AccountId;
+								MergeAsset.ContactId  = ProdRequiredContact.id;
+                                updateAssetsList.add(MergeAsset);
+								
+}
+system.debug('listReplaceAssets: '+listReplaceAssets.size());
+system.debug('updateAssetsList: '+updateAssetsList);
+    
+List<DA_ContactContractRelationship__c> listReplaceCCRs = [select Id, IsDeleted, Name, CurrencyIsoCode, RecordTypeId, CreatedDate, CreatedById, LastModifiedDate, LastModifiedById, SystemModstamp, 
+                                                           Contract__c, Contact__c, Account__c, Contact_Name__c, Contact_Role__c, DA_Hyperlink_Contact__c, End_Date__c, Start_Date__c, MIG_AccountID__c, 
+                                                           MIG_ContactID__c, MIG_ContractID__c, MIG_CCRID__c,Correspondence_Recipient__c, Portal_Access__c, PowerOfAttorney__c from DA_ContactContractRelationship__c where Contact__c =: ReplaceMergeContact];
+for(DA_ContactContractRelationship__c MergeCCR: listReplaceCCRs){
+    							
+    							DA_ContactContractRelationship__c newCCR = MergeCCR.clone(false, false, false, false);
+								newCCR.Account__c = ProdRequiredContact.AccountId;
+								newCCR.Contact__c = ProdRequiredContact.id;
+    							createCCRList.add(newCCR);
+								}
+system.debug('createCCRList: '+createCCRList);
+
+List<NE__Service_Point__c> listReplaceServicePoints=[Select id, NE__ACCOUNT__C FROM NE__Service_Point__c where NE__Account__c=:ReplaceMergeAccount]; 
+List<NE__Service_Point__c> updateServicePointsList= new List<NE__Service_Point__c>(); 
+for(NE__Service_Point__c mergeservicepoints:listReplaceServicePoints) {
+                
+                mergeservicepoints.NE__ACCOUNT__C=ProdRequiredContact.AccountId;
+                updateServicePointsList.add(mergeservicepoints);
+}  
+system.debug('listReplaceServicePoints: '+listReplaceServicePoints.size());
+system.debug('updateServicePointsList: '+updateServicePointsList);
+            
+Entitlement ProdRequiredEntitlement = [select id from Entitlement where AccountId =: ProdRequiredContact.AccountId];
+
+List<Case> listReplaceCase=[select id, AccountId, ContactId,EntitlementId FROM Case where ContactId =:ReplaceMergeContact];
+list<Case> updateCaseList= new list<Case>();  
+
+  for (Case mergeCase:listReplaceCase) {
+  
+        mergeCase.AccountId=ProdRequiredContact.AccountId;
+        mergeCase.ContactId=ProdRequiredContact.id;
+        mergeCase.EntitlementId=ProdRequiredEntitlement.Id;
+		updateCaseList.add(mergeCase);
+  }
+system.debug('listReplaceCase: '+listReplaceCase.size());
+system.debug('updateCaseList: '+updateCaseList);
+
+List<Correspondence__c> listReplaceCorrespodence=[select id, Contact__c,ACCOUNT__C FROM Correspondence__c where Contact__c =: ReplaceMergeContact];
+List<Correspondence__c> updateCorrespondenceList= new List<Correspondence__c>(); 
+
+for(Correspondence__c mergeCorrespondence:listReplaceCorrespodence) {
+
+                
+                mergeCorrespondence.Contact__c=ProdRequiredContact.id;
+                updateCorrespondenceList.add(mergeCorrespondence);
+}              
+system.debug('listReplaceCorrespodence: '+listReplaceCorrespodence.size());
+system.debug('updateCorrespondenceList:'+updateCorrespondenceList);
+
+List<Customer_Verification_Form__c> listReplaceCVForm = [select id, Account__c,Contact__c from Customer_Verification_Form__c where Account__c =: ReplaceMergeAccount OR Contact__c =: ReplaceMergeContact];
+List<Customer_Verification_Form__c> updateCVFormList = new List<Customer_Verification_Form__c>();
+
+for(Customer_Verification_Form__c MergeCVForm: listReplaceCVForm){
+								if(MergeCVForm.Account__c != null)
+									MergeCVForm.Account__c = ProdRequiredContact.AccountId;
+								if(MergeCVForm.Contact__c != null)
+									MergeCVForm.Contact__c = ProdRequiredContact.id;
+                                updateCVFormList.add(MergeCVForm);
+}
+system.debug('listReplaceCVForm: '+listReplaceCVForm.size());
+system.debug('updateCVFormList: '+updateCVFormList);
+
+List<NE__Order_Header__c> listReplaceOrdHeader = [select id, NE__ServAccId__c, NE__BillAccId__c, NE__AccountId__c, DA_Contact__c from NE__Order_Header__c where NE__AccountId__c =: ReplaceMergeAccount];
+List<NE__Order_Header__c> updateOrderHeaderList = new List<NE__Order_Header__c>();
+
+for(NE__Order_Header__c MergeOHeader: listReplaceOrdHeader){
+                                MergeOHeader.NE__ServAccId__c  = ProdRequiredContact.AccountId;
+								MergeOHeader.NE__BillAccId__c  = ProdRequiredContact.AccountId;
+								MergeOHeader.NE__AccountId__c  = ProdRequiredContact.AccountId;
+								if(MergeOHeader.DA_Contact__c != null )
+									MergeOHeader.DA_Contact__c  = ProdRequiredContact.id;
+                                updateOrderHeaderList.add(MergeOHeader);
+}
+system.debug('listReplaceOrdHeader: '+listReplaceOrdHeader.size());
+system.debug('updateOrderHeaderList: '+updateOrderHeaderList);
+
+List<NE__Order__c> listReplaceConfigs = [select id, NE__ServAccId__c, NE__BillAccId__c, NE__AccountId__c from NE__Order__c where NE__AccountId__c =: ReplaceMergeAccount];
+List<NE__Order__c> updateConfigurationList = new List<NE__Order__c>();
+
+for(NE__Order__c MergeConfig: listReplaceConfigs){
+                                MergeConfig.NE__ServAccId__c  = ProdRequiredContact.AccountId;
+								MergeConfig.NE__BillAccId__c  = ProdRequiredContact.AccountId;
+								MergeConfig.NE__AccountId__c  = ProdRequiredContact.AccountId;
+                                updateConfigurationList.add(MergeConfig);
+}
+system.debug('listReplaceConfigs: '+listReplaceConfigs.size());
+system.debug('updateConfigurationList: '+updateConfigurationList);
+
+List<NE__OrderItem__c> listReplaceOderItems = [select id, NE__Account__c, NE__Billing_Account__c, NE__Service_Account__c, DA_Contact__c FROM NE__OrderItem__c where NE__Account__c =: ReplaceMergeAccount];
+List<NE__OrderItem__c> updateOrderItemList = new List<NE__OrderItem__c>();
+
+for(NE__OrderItem__c MergeOItem: listReplaceOderItems){
+                                MergeOItem.NE__Account__c  = ProdRequiredContact.AccountId;
+								MergeOItem.NE__Billing_Account__c  = ProdRequiredContact.AccountId;
+								MergeOItem.NE__Service_Account__c  = ProdRequiredContact.AccountId;
+								if(MergeOItem.DA_Contact__c != null )
+									MergeOItem.DA_Contact__c  = ProdRequiredContact.id;
+                                updateOrderItemList.add(MergeOItem);
+}
+system.debug('listReplaceOderItems: '+listReplaceOderItems.size());
+system.debug('updateOrderItemList: '+updateOrderItemList);
+
+List<NE__Quote__c> listReplaceQuotes = [select id, NE__AccountId__c, DA_Contact__c FROM NE__Quote__c where NE__AccountId__c =: ReplaceMergeAccount];
+List<NE__Quote__c> updateQuoteList = new List<NE__Quote__c>();
+
+for(NE__Quote__c MergeQuote: listReplaceQuotes){
+                                MergeQuote.NE__AccountId__c  = ProdRequiredContact.AccountId;
+								if(MergeQuote.DA_Contact__c != null )
+									MergeQuote.DA_Contact__c  = ProdRequiredContact.id;
+                                updateQuoteList.add(MergeQuote);
+}
+system.debug('listReplaceQuotes: '+listReplaceQuotes.size());
+system.debug('updateQuoteList: '+updateQuoteList);
+
+List<DA_Communication_History__c> listReplaceCommHistory = [select id, DA_Related_Contact__c, DA_Related_Account__c FROM DA_Communication_History__c where DA_Related_Contact__c =: ReplaceMergeContact];
+List<DA_Communication_History__c> updateCommHistoryList = new List<DA_Communication_History__c>();
+
+for(DA_Communication_History__c MergeCHistory: listReplaceCommHistory){
+								if(MergeCHistory.DA_Related_Account__c != null )
+									MergeCHistory.DA_Related_Account__c  = ProdRequiredContact.AccountId;
+								MergeCHistory.DA_Related_Contact__c  = ProdRequiredContact.id;
+                                updateCommHistoryList.add(MergeCHistory);
+}
+system.debug('listReplaceCommHistory: '+listReplaceCommHistory.size());
+system.debug('updateCommHistoryList: '+updateCommHistoryList);
+
+List<Bit2WinHUB__Bulk_Configuration_Request__c> listReplaceBCR = [select id, AccountId__c, ContactId__c FROM Bit2WinHUB__Bulk_Configuration_Request__c where AccountId__c =: ReplaceMergeAccount];
+List<Bit2WinHUB__Bulk_Configuration_Request__c> updateBCRList = new List<Bit2WinHUB__Bulk_Configuration_Request__c>();
+
+for(Bit2WinHUB__Bulk_Configuration_Request__c MergeBCR: listReplaceBCR){
+                                MergeBCR.AccountId__c  = ProdRequiredContact.AccountId;
+								MergeBCR.ContactId__c  = ProdRequiredContact.id;
+                                updateBCRList.add(MergeBCR);
+}
+system.debug('listReplaceBCR: '+listReplaceBCR.size());
+system.debug('updateBCRList: '+updateBCRList);
+
+List<DA_ContactContractRelationship__c> DeleteCCRList = [select id, Account__c, Contact__c FROM DA_ContactContractRelationship__c where Contact__c =: ReplaceMergeContact];
+
+system.debug('DeleteCCRList: '+DeleteCCRList.size());
+
+Contact ReplaceContactEGCID =[select id, AccountId, DA_EGCID__c FROM Contact where Id =:ReplaceMergeContact];
+  
+        ReplaceContactEGCID.DA_EGCID__c = null;
+
+system.debug('ReplaceContactEGCID: '+ReplaceContactEGCID);
+
+if(updateAssetsList != null && updateAssetsList.size() > 0)
+	update updateAssetsList;
+if(updateServicePointsList != null && updateServicePointsList.size() > 0)
+	update updateServicePointsList;
+if(updateCaseList != null && updateCaseList.size() > 0)
+	update updateCaseList;
+if(updateCorrespondenceList != null && updateCorrespondenceList.size() > 0)
+	update updateCorrespondenceList;
+if(updateCVFormList != null && updateCVFormList.size() > 0)
+	update updateCVFormList;
+if(updateOrderHeaderList != null && updateOrderHeaderList.size() > 0)
+	update updateOrderHeaderList;
+if(updateConfigurationList != null && updateConfigurationList.size() > 0)
+	update updateConfigurationList;
+if(updateOrderItemList != null && updateOrderItemList.size() > 0)
+	update updateOrderItemList;
+if(updateQuoteList != null && updateQuoteList.size() > 0)
+	update updateQuoteList;
+if(updateCommHistoryList != null && updateCommHistoryList.size() > 0)
+	update updateCommHistoryList;
+if(updateBCRList != null && updateBCRList.size() > 0)
+	update updateBCRList;
+if(createCCRList != null && createCCRList.size() > 0)
+	insert createCCRList;
+if(DeleteCCRList != null && DeleteCCRList.size() > 0)	
+	delete DeleteCCRList;
+	
+update ReplaceContactEGCID;
+}

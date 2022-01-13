@@ -1,0 +1,154 @@
+public class DeleteTestCustomerRecords implements Queueable{
+
+    private Set<Id> userIds;
+    private Set<Id> accountIds;
+
+
+    public DeleteTestCustomerRecords(Set<Id> userIdSet,Set<Id> accountIdSet) {
+        userIds = userIdSet;
+        accountIds = accountIdSet;
+    }
+
+
+    public void execute(QueueableContext qc) {
+
+        boolean status = getstatus(userIds);
+        if (status) {
+            List<Account> accList = [SELECT Id FROM Account WHERE Id IN:accountIds];
+            List<NE__Service_Point__c> servicePointList = [SELECT Id,NE__Account__c FROM NE__Service_Point__c WHERE NE__Account__c IN:accountIds];
+            List<Customer_Verification_Form__c> customerVerificationFormList = [SELECT Id,Account__c FROM Customer_Verification_Form__c WHERE Account__c IN:accountIds];
+            List<Case> caseList = [SELECT Id, AccountId FROM Case WHERE AccountId IN:accountIds];
+            List<Case_NER__c> caseNERList = [SELECT Id,Case__c FROM Case_NER__c WHERE Case__c IN:caseList];
+            List<Entitlement> entitlementList = [SELECT Id,AccountId FROM Entitlement WHERE AccountId IN:accountIds];
+            List<Asset> assetList = [SELECT Id,AccountId FROM Asset WHERE AccountId IN:accountIds];
+            List<AccountContactRelation> accContactRelationList = [SELECT Id, AccountId FROM AccountContactRelation WHERE AccountId IN:accountIds];
+
+            try{
+                delete servicePointList;
+            }catch(Exception ex){
+                System.debug('Error on line number '+ex.getLineNumber() + ' with error: '+ex.getMessage());
+            }
+
+            try{
+                delete customerVerificationFormList;
+            }catch(Exception ex){
+                System.debug('Error on line number '+ex.getLineNumber() + ' with error: '+ex.getMessage());
+            }
+
+            try{
+                delete caseNERList;
+            }catch(Exception ex){
+                System.debug('Error on line number '+ex.getLineNumber() + ' with error: '+ex.getMessage());
+            }
+
+            try{
+                delete caseList;
+            }catch(Exception ex){
+                System.debug('Error on line number '+ex.getLineNumber() + ' with error: '+ex.getMessage());
+            }
+
+            try{
+                delete entitlementList;
+            }catch(Exception ex){
+                System.debug('Error on line number '+ex.getLineNumber() + ' with error: '+ex.getMessage());
+            }
+            
+            try{
+                delete assetList;
+            }catch(Exception ex){
+                System.debug('Error on line number '+ex.getLineNumber() + ' with error: '+ex.getMessage());
+            }
+
+            try{
+                delete accContactRelationList;
+            }catch(Exception ex){
+                System.debug('Error on line number '+ex.getLineNumber() + ' with error: '+ex.getMessage());
+            }
+
+            try{
+                delete accList;
+            }catch(Exception ex){
+                System.debug('Error on line number '+ex.getLineNumber() + ' with error: '+ex.getMessage());
+            }
+
+        } else {
+            System.enqueueJob(new DeleteTestCustomerRecords(userIds,accountIds));
+        }
+    }
+
+
+    public static boolean getstatus(Set<Id> userIds){
+        List<User> userDetails = [Select Id,IsPortalEnabled from User where Id IN :userIds AND IsPortalEnabled=true];
+        if(userDetails.size()>0){
+            return false;
+        }else{
+            return true;
+        }
+    }
+}
+
+
+
+
+
+
+
+--------------------------------------------------------------Console Script --------------------------------------------------------------------------------
+
+List<User> userList = [SELECT FirstName,LastName,ProfileId,Email,ContactId,Phone,CreatedDate,Id,Name,Username,isActive FROM User WHERE ProfileId = '00e0Y000000johHQAQ' AND CreatedDate < 2021-05-31T00:00:00+02:00 AND isActive = TRUE];
+List<User> updateuserList = new List<User>();
+Set<Id> contactIdSet = new Set<Id>();
+Set<Id> accountIdSet = new Set<Id>();
+Set<Id> userIdSet = new Set<Id>();
+System.debug('userList@@@@@@'+userList);
+System.debug('userList Size@@@@@@'+userList.size());
+For(User u: userList){
+    contactIdSet.add(u.COntactId);
+    userIdSet.add(u.Id);
+    User usr = new User();
+    usr.Id = u.Id;
+    usr.FirstName = '';
+    usr.LastName = 'DeActivate001'+u.Id;
+    usr.Email ='deactivte@'+u.Id+'.com';
+    usr.Phone = '';
+    usr.FederationIdentifier = '';
+    //usr.IsActive = false;
+    usr.IsPortalEnabled = false;
+    updateuserList.add(usr);
+}
+System.debug('updateuserList@@@@@@'+updateuserList);
+if (updateuserList.size()>0){
+    update updateuserList;
+}
+
+
+for(Contact con:[Select Id,AccountId from Contact where Id IN : contactIdSet]){
+    accountIdSet.add(con.AccountId);
+}
+System.debug('accountIdSet@@@@@@'+accountIdSet);
+if(accountIdSet.size()>0){
+ ID jobID = System.enqueueJob(new DeleteTestCustomerRecords(userIdSet,accountIdSet));
+System.debug('jobID'+jobID);
+}
+
+
+
+
+-
+--------------------------------------------Emergency manual deletion----------------------------------------------------
+
+List<User> userList = [SELECT FirstName,LastName,ProfileId,Email,ContactId,Phone,CreatedDate,Id,Name,Username,isActive FROM User WHERE ProfileId = '00e0Y000000johHQAQ' AND CreatedDate < 2021-05-31T00:00:00+02:00 AND CreatedDate > 2021-05-26T17:00:00+02:00];
+List<Account> accList = [SELECT CreatedDate,Id,Name FROM Account WHERE CreatedDate < 2021-05-27T15:20:00+02:00 AND CreatedDate > 2021-05-26T17:00:00+02:00];
+
+Set<Id> accountIdSet = new Set<Id>();
+Set<Id> userIdSet = new Set<Id>();
+
+
+for(Account acc:[Select Id from Account where Id IN : accList]){
+    accountIdSet.add(acc.Id);
+}
+
+if(accountIdSet.size()>0){
+ ID jobID = System.enqueueJob(new DeleteTestCustomerRecords(userIdSet,accountIdSet));
+System.debug('jobID'+jobID);
+}

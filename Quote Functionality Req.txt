@@ -1,0 +1,15 @@
+However whenever a User tries to Generate a PDF Quote, this program must ensure
+1.	Is there an Active Price Book on Opportunity? (check for Pricebook2.inactive = true for Opportunity.PricebookID)
+
+2.	If not that is if an inactive Price Book exists then check for active price book, (Checking for active Price book depends 
+	on Account Name, Dealer Price book region, from Pricebook automation object, then select Price book with the Pricebook ID in 
+	the record)
+	
+3.	Refresh price book to current and active price book
+
+4.	Show warning if price book refresh takes place 
+
+5.	If User clicks on OK then generate PDF with refreshed Price book values
+
+6.	If User clicks on Cancel then do not generate PDF
+

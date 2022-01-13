@@ -1,0 +1,33 @@
+Assign below permissions to yourself to work on key destruction process.
+Advanced User Details > Permission Set Assignments > Edit and Assign below permission Sets to yourself
+	Platform Encryption 
+	Encryptrd data 
+	Save.
+
+Certificate and Key Management
+	Click on Create Self Signed Certificate
+	Label: MIGCertificate
+	Unique name: MIGCertificate
+	Exportable Private Key: Unckeck
+	Use Platform Encryption: Check
+	Key Size: 4096
+	Save
+	Download the Certificate file
+
+Create 2 folders
+Data > Add secretgen and Downloaded Certificate > In the folder click on Git Bash here > 
+./secretgen.sh MIGCertificate.crt
+Deterministic > Add secretgen and Downloaded Certificate > In the folder click on Git Bash here > 
+./secretgen.sh MIGCertificate.crt
+(encrypted_secret.b64 and plaintext_secret_hash.b64 files will be Generated in both the folders)
+
+Key Management
+Bring Your Own Key > 
+Choose the Tenant Secret Type: Data and Deterministic one by one and upload the generated files(encrypted_secret.b64 and plaintext_secret_hash.b64)
+
+Encryption Statistics
+	Encryption Statistics and Data Sync
+		Gather Statistics and Sync all objects one by one
+
+Key Management
+Destroy the old keys of Data and Deterministic both.

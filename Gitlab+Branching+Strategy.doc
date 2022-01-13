@@ -1,0 +1,427 @@
+Message-ID: <1460197178.26185.1569238862256.JavaMail.confluence1@espwe-prd-conf1>
+Subject: Exported From Confluence
+MIME-Version: 1.0
+Content-Type: multipart/related; 
+	boundary="----=_Part_26184_2075885958.1569238862250"
+
+------=_Part_26184_2075885958.1569238862250
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+Content-Location: file:///C:/exported.html
+
+<html xmlns:o=3D'urn:schemas-microsoft-com:office:office'
+      xmlns:w=3D'urn:schemas-microsoft-com:office:word'
+      xmlns:v=3D'urn:schemas-microsoft-com:vml'
+      xmlns=3D'urn:w3-org-ns:HTML'>
+<head>
+    <meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Dutf-8=
+">
+    <title>Gitlab Branching Strategy</title>
+    <!--[if gte mso 9]>
+    <xml>
+        <o:OfficeDocumentSettings>
+            <o:TargetScreenSize>1024x640</o:TargetScreenSize>
+            <o:PixelsPerInch>72</o:PixelsPerInch>
+            <o:AllowPNG/>
+        </o:OfficeDocumentSettings>
+        <w:WordDocument>
+            <w:View>Print</w:View>
+            <w:Zoom>90</w:Zoom>
+            <w:DoNotOptimizeForBrowser/>
+        </w:WordDocument>
+    </xml>
+    <![endif]-->
+    <style>
+                <!--
+        @page Section1 {
+            size: 8.5in 11.0in;
+            margin: 1.0in;
+            mso-header-margin: .5in;
+            mso-footer-margin: .5in;
+            mso-paper-source: 0;
+        }
+
+        table {
+            border: solid 1px;
+            border-collapse: collapse;
+        }
+
+        table td, table th {
+            border: solid 1px;
+            padding: 5px;
+        }
+
+        td {
+            page-break-inside: avoid;
+        }
+
+        tr {
+            page-break-after: avoid;
+        }
+
+        div.Section1 {
+            page: Section1;
+        }
+
+        /* Confluence print stylesheet. Common to all themes for print medi=
+a */
+/* Full of !important until we improve batching for print CSS */
+
+@media print {
+    #main {
+        padding-bottom: 1em !important; /* The default padding of 6em is to=
+o much for printouts */
+    }
+
+    body {
+        font-family: Arial, Helvetica, FreeSans, sans-serif;
+        font-size: 10pt;
+        line-height: 1.2;
+    }
+
+    body, #full-height-container, #main, #page, #content, .has-personal-sid=
+ebar #content {
+        background: #fff !important;
+        color: #000 !important;
+        border: 0 !important;
+        width: 100% !important;
+        height: auto !important;
+        min-height: auto !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        display: block !important;
+    }
+
+    a, a:link, a:visited, a:focus, a:hover, a:active {
+        color: #000;
+    }
+
+    #content h1,
+    #content h2,
+    #content h3,
+    #content h4,
+    #content h5,
+    #content h6 {
+        font-family: Arial, Helvetica, FreeSans, sans-serif;
+        page-break-after: avoid;
+    }
+
+    pre {
+        font-family: Monaco, "Courier New", monospace;
+    }
+
+    #header,
+    .aui-header-inner,
+    #navigation,
+    #sidebar,
+    .sidebar,
+    #personal-info-sidebar,
+    .ia-fixed-sidebar,
+    .page-actions,
+    .navmenu,
+    .ajs-menu-bar,
+    .noprint,
+    .inline-control-link,
+    .inline-control-link a,
+    a.show-labels-editor,
+    .global-comment-actions,
+    .comment-actions,
+    .quick-comment-container,
+    #addcomment {
+        display: none !important;
+    }
+
+    /* CONF-28544 cannot print multiple pages in IE */
+    #splitter-content {
+        position: relative !important;
+    }
+
+    .comment .date::before {
+        content: none !important; /* remove middot for print view */
+    }
+
+    h1.pagetitle img {
+        height: auto;
+        width: auto;
+    }
+
+    .print-only {
+        display: block;
+    }
+
+    #footer {
+        position: relative !important; /* CONF-17506 Place the footer at en=
+d of the content */
+        margin: 0;
+        padding: 0;
+        background: none;
+        clear: both;
+    }
+
+    #poweredby {
+        border-top: none;
+        background: none;
+    }
+
+    #poweredby li.print-only {
+        display: list-item;
+        font-style: italic;
+    }
+
+    #poweredby li.noprint {
+        display: none;
+    }
+
+    /* no width controls in print */
+    .wiki-content .table-wrap,
+    .wiki-content p,
+    .panel .codeContent,
+    .panel .codeContent pre,
+    .image-wrap {
+        overflow: visible !important;
+    }
+
+    /* TODO - should this work? */
+    #children-section,
+    #comments-section .comment,
+    #comments-section .comment .comment-body,
+    #comments-section .comment .comment-content,
+    #comments-section .comment p {
+        page-break-inside: avoid;
+    }
+
+    #page-children a {
+        text-decoration: none;
+    }
+
+    /**
+     hide twixies
+
+     the specificity here is a hack because print styles
+     are getting loaded before the base styles. */
+    #comments-section.pageSection .section-header,
+    #comments-section.pageSection .section-title,
+    #children-section.pageSection .section-header,
+    #children-section.pageSection .section-title,
+    .children-show-hide {
+        padding-left: 0;
+        margin-left: 0;
+    }
+
+    .children-show-hide.icon {
+        display: none;
+    }
+
+    /* personal sidebar */
+    .has-personal-sidebar #content {
+        margin-right: 0px;
+    }
+
+    .has-personal-sidebar #content .pageSection {
+        margin-right: 0px;
+    }
+
+    .no-print, .no-print * {
+        display: none !important;
+    }
+}
+-->
+    </style>
+</head>
+<body>
+    <h1>Gitlab Branching Strategy</h1>
+    <div class=3D"Section1">
+        <p><span>Git-Lab Repository Link:- &nbsp;<a href=3D"https://git.eon=
+-cds.de/hcl-da/salesforcedevops/sfdc-meta" class=3D"external-link" rel=3D"n=
+ofollow">https://git.eon-cds.de/hcl-da/salesforcedevops/sfdc-meta</a></span=
+></p>
+<p><span>Artifactory Url - <a href=3D"https://repo.eon-cds.de/artifactory" =
+class=3D"external-link" rel=3D"nofollow">https://repo.eon-cds.de/artifactor=
+y</a></span></p>
+<p><span>Artifactory Snapshot url - <a href=3D"https://repo.eon-cds.de/arti=
+factory/digatt-maven-local/com/eon/salesforce/sfdc/snapshots/" class=3D"ext=
+ernal-link" rel=3D"nofollow">https://repo.eon-cds.de/artifactory/digatt-mav=
+en-local/com/eon/salesforce/sfdc/snapshots/</a></span></p>
+<p><span>Artifactory Release url - <a href=3D"https://repo.eon-cds.de/artif=
+actory/digatt-maven-local/com/eon/salesforce/sfdc/releases/" class=3D"exter=
+nal-link" rel=3D"nofollow">https://repo.eon-cds.de/artifactory/digatt-maven=
+-local/com/eon/salesforce/sfdc/releases/</a></span></p>
+<p><span>Branching Strategy =E2=80=93</span></p>
+<p><span>Feature &gt;&gt; Integration &gt;&gt; Develop &gt;&gt; Release</sp=
+an></p>
+<p><span>Deployment Strategy =E2=80=93 </span></p>
+<p><span>Dev Sandbox &gt;&gt; FT &gt;&gt; SIT &gt;&gt; PreProd &gt;&gt; Pro=
+d</span></p>
+<ol>
+<li>JOB 100 -&nbsp;<span><a href=3D"https://git.eon-cds.de/hcl-da/salesforc=
+edevops/100" class=3D"external-link" rel=3D"nofollow">documentation</a></sp=
+an><u> link</u></li>
+<li>JOB 200 -&nbsp;<span><a href=3D"https://git.eon-cds.de/hcl-da/salesforc=
+edevops/sfdc-meta" class=3D"external-link" rel=3D"nofollow">documentation l=
+ink</a></span></li>
+<li><span> </span>JOB 400&nbsp;-&nbsp;<u><a href=3D"https://git.eon-cds.de/=
+hcl-da/salesforcedevops/sfdc-meta" class=3D"external-link" rel=3D"nofollow"=
+>documentation link</a></u></li>
+<li>JOB 450&nbsp;-<span><a href=3D"https://git.eon-cds.de/hcl-da/salesforce=
+devops/450" class=3D"external-link" rel=3D"nofollow">documentation link</a>=
+</span></li>
+<li><span> </span>JOB 500&nbsp;-&nbsp;<a href=3D"https://git.eon-cds.de/hcl=
+-da/salesforcedevops/500" class=3D"external-link" rel=3D"nofollow">document=
+ation link</a></li>
+<li>JOB 600&nbsp;-&nbsp;<span><a href=3D"https://git.eon-cds.de/hcl-da/sale=
+sforcedevops/600" class=3D"external-link" rel=3D"nofollow">documentation li=
+nk</a></span></li>
+<li>JOB 700 - <span><a href=3D"https://git.eon-cds.de/hcl-da/salesforcedevo=
+ps/700" class=3D"external-link" rel=3D"nofollow">documentation link</a></sp=
+an></li>
+</ol>
+<div class=3D"table-wrap">
+<table class=3D"confluenceTable">
+<colgroup>
+<col>
+<col>
+<col>
+<col>
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td class=3D"confluenceTd"><p><strong><span>Job</span></strong></p></td>
+<td class=3D"confluenceTd"><p><strong><span>EXECUTION TYPE</span></strong><=
+/p></td>
+<td class=3D"confluenceTd"><p><strong><span>Job Repo &amp; Instructions</sp=
+an></strong></p></td>
+<td class=3D"confluenceTd"><p><strong><span>Job Execution URL</span></stron=
+g></p></td>
+<td class=3D"confluenceTd"><p><strong><span>MANUAL EXECUTION: RUNTIME VARIA=
+BLES</span></strong></p></td>
+</tr>
+<tr>
+<td class=3D"confluenceTd"><p><span>100</span></p></td>
+<td class=3D"confluenceTd"><p><span>MANUAL</span></p></td>
+<td class=3D"confluenceTd"><p><span><a href=3D"https://git.eon-cds.de/hcl-d=
+a/salesforcedevops/100" class=3D"external-link" rel=3D"nofollow">https://gi=
+t.eon-cds.de/hcl-da/salesforcedevops/100</a></span></p></td>
+<td class=3D"confluenceTd"><p><span>&nbsp;<a href=3D"https://git.eon-cds.de=
+/hcl-da/salesforcedevops/100/pipelines" class=3D"external-link" rel=3D"nofo=
+llow">https://git.eon-cds.de/hcl-da/salesforcedevops/100/pipelines</a></spa=
+n></p></td>
+<td class=3D"confluenceTd"><p><strong><span>RUN FOR =3D master<br>SF_ENVIRO=
+NMENT =3D ranjithdev</span></strong><span>, (As defined in Env. variable)<b=
+r><strong>BRANCH_SCOPE =3D &lt;featureBranch&gt;,</strong> Your feature bra=
+nch in SFDC meta repo(<a href=3D"https://git.eon-cds.de/hcl-da/salesforcede=
+vops/sfdc-meta" class=3D"external-link" rel=3D"nofollow">https://git.eon-cd=
+s.de/hcl-da/salesforcedevops/sfdc-meta</a></span></p></td>
+</tr>
+<tr>
+<td class=3D"confluenceTd"><p><span>200</span></p></td>
+<td class=3D"confluenceTd"><p><span>AUTO-TRIGGER <br><br></span></p></td>
+<td class=3D"confluenceTd"><p><span><a href=3D"https://git.eon-cds.de/hcl-d=
+a/salesforcedevops/sfdc-meta" class=3D"external-link" rel=3D"nofollow">http=
+s://git.eon-cds.de/hcl-da/salesforcedevops/sfdc-meta</a></span></p></td>
+<td class=3D"confluenceTd"><p><span>AUTO-TRIGGERED =E2=80=93 Any Commit-On =
+&lt;integration&gt; branch</span></p></td>
+<td class=3D"confluenceTd"><p><strong><span>NA</span></strong></p></td>
+</tr>
+<tr>
+<td class=3D"confluenceTd"><p><span>400</span></p></td>
+<td class=3D"confluenceTd"><p><span>AUTO-TRIGGER <br><br></span></p></td>
+<td class=3D"confluenceTd"><p><span><a href=3D"https://git.eon-cds.de/hcl-d=
+a/salesforcedevops/sfdc-meta" class=3D"external-link" rel=3D"nofollow">http=
+s://git.eon-cds.de/hcl-da/salesforcedevops/sfdc-meta</a></span></p></td>
+<td class=3D"confluenceTd"><p><span>AUTO-TRIGGERED =E2=80=93 Any Commit-On =
+&lt;develop&gt; branch</span></p></td>
+<td class=3D"confluenceTd"><p><strong><span>NA</span></strong></p></td>
+</tr>
+<tr>
+<td class=3D"confluenceTd"><p><span>450</span></p></td>
+<td class=3D"confluenceTd"><p><span>MANUAL</span></p></td>
+<td class=3D"confluenceTd"><p><span><a href=3D"https://git.eon-cds.de/hcl-d=
+a/salesforcedevops/450" class=3D"external-link" rel=3D"nofollow">https://gi=
+t.eon-cds.de/hcl-da/salesforcedevops/450</a></span></p></td>
+<td class=3D"confluenceTd"><p><span><a href=3D"https://git.eon-cds.de/hcl-d=
+a/salesforcedevops/sfdc-meta/pipelines/new" class=3D"external-link" rel=3D"=
+nofollow">https://git.eon-cds.de/hcl-da/salesforcedevops/sfdc-meta/pipeline=
+s/new</a></span></p></td>
+<td class=3D"confluenceTd"><p><strong><span>Run For =3D master<br>RELEASE_B=
+RANCH =3D release_v4.1</span></strong></p></td>
+</tr>
+<tr>
+<td class=3D"confluenceTd"><p><span>500</span></p></td>
+<td class=3D"confluenceTd"><p><span>MANUAL</span></p></td>
+<td class=3D"confluenceTd"><p><span><a href=3D"https://git.eon-cds.de/hcl-d=
+a/salesforcedevops/500" class=3D"external-link" rel=3D"nofollow">https://gi=
+t.eon-cds.de/hcl-da/salesforcedevops/500</a></span></p></td>
+<td class=3D"confluenceTd"><p><span><a href=3D"https://git.eon-cds.de/hcl-d=
+a/salesforcedevops/500/pipelines/new" class=3D"external-link" rel=3D"nofoll=
+ow">https://git.eon-cds.de/hcl-da/salesforcedevops/500/pipelines/new</a></s=
+pan></p></td>
+<td class=3D"confluenceTd"><p><strong><span>Run For =3D master<br>RELEASE_A=
+RT =3D v4.1-20190916-1527</span></strong></p></td>
+</tr>
+<tr>
+<td class=3D"confluenceTd"><p><span>600</span></p></td>
+<td class=3D"confluenceTd"><p><span>MANUAL</span></p></td>
+<td class=3D"confluenceTd"><p><span><a href=3D"https://git.eon-cds.de/hcl-d=
+a/salesforcedevops/600" class=3D"external-link" rel=3D"nofollow">https://gi=
+t.eon-cds.de/hcl-da/salesforcedevops/600</a></span></p></td>
+<td class=3D"confluenceTd"><p><span><a href=3D"https://git.eon-cds.de/hcl-d=
+a/salesforcedevops/600/pipelines/new" class=3D"external-link" rel=3D"nofoll=
+ow">https://git.eon-cds.de/hcl-da/salesforcedevops/600/pipelines/new</a></s=
+pan></p></td>
+<td class=3D"confluenceTd"><p><strong><span>Run For =3D master<br>RELEASE_A=
+RT =3D v4.1-20190916-1527</span></strong></p></td>
+</tr>
+<tr>
+<td class=3D"confluenceTd"><p><span>700</span></p></td>
+<td class=3D"confluenceTd"><p><span>MANUAL</span></p></td>
+<td class=3D"confluenceTd"><p><span><a href=3D"https://git.eon-cds.de/hcl-d=
+a/salesforcedevops/700" class=3D"external-link" rel=3D"nofollow">https://gi=
+t.eon-cds.de/hcl-da/salesforcedevops/700</a></span></p></td>
+<td class=3D"confluenceTd"><p><span>&nbsp;<a href=3D"https://git.eon-cds.de=
+/hcl-da/salesforcedevops/700/pipelines/new" class=3D"external-link" rel=3D"=
+nofollow">https://git.eon-cds.de/hcl-da/salesforcedevops/700/pipelines/new<=
+/a></span></p></td>
+<td class=3D"confluenceTd"><p><strong><span>SF_ENVIRONMENT =3D&nbsp; ranjit=
+hdev<br>BRANCH_SCOPE =3D&nbsp; &lt;Temp_Branch_Name&gt;</span></strong></p>=
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><span>&nbsp;</span></p>
+<p><span>&nbsp;</span></p>
+<ol>
+<li>Feature branch will be created from integration branch.</li>
+<li>As part of Feature Release, development will be completed in respective=
+ Dev Sandbox.</li>
+<li>To retrieve components from Dev Sandbox Job- 100 should be executed man=
+ually.</li>
+<li>Job-100 creates a Merge request to Feature branch and shows all the cha=
+nges related to Feature development from the SF dev sandbox.</li>
+<li>Developer will review the changes and merge them into Feature branch th=
+rough VS code.</li>
+<li>Create Merge request from Feature branch to integration branch manually=
+.</li>
+<li>On commit of this merge request job-200 is triggered which validates th=
+e changes in FT environment and provides the option to Deploy to the same i=
+nstance.</li>
+<li>Create a Merge Request from Integration branch to Develop branch</li>
+<li>On commit of this Merge into Develop branch will trigger job 400.</li>
+<li>Job 400 =E2=80=93 Validates the changes in SIT org and creates a Snapsh=
+ot Artifactory</li>
+<li><span>Create a Release branch from Develop branch. </span></li>
+<li>To deploy changes from Release branch to SIT Execute Job-450 Manually.<=
+/li>
+<li><span>Job-450 creates a Release Artifactory and also deploys the change=
+s to SIT org.</span></li>
+<li><span>In order to deploy a Release to PreProd org execute job- 500.</sp=
+an></li>
+<li><span>In order to deploy a Release to Prod org execute job- 600.</span>=
+</li>
+</ol>
+<p><span>&nbsp;</span></p>
+    </div>
+</body>
+</html>
+------=_Part_26184_2075885958.1569238862250--

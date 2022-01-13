@@ -1,0 +1,20 @@
+SELECT id,AccountId,Contactid FROM Asset WHERE Billing_ID__c = '401195331'
+
+CCR Insert:
+DA_ContactContractRelationship__c insertccr= new DA_ContactContractRelationship__c(); 
+                insertccr.Contract__c='02i1v00000Pn0tCAAR';
+                insertccr.Account__c ='0011v00002maZcLAAU';
+                insertccr.Contact__c ='0031v00002mCRknAAG';
+                insertccr.Contact_Role__c='contract_owner';
+                insertccr.PowerOfAttorney__c ='in full';
+                insertccr.Portal_Access__c = 'Yes';
+                insertccr.Correspondence_Recipient__c = 'Yes'; 
+insert insertccr;
+
+
+ACR Update:
+AccountContactRelation updateACR= new AccountContactRelation (); 
+updateACR=Select Id,contactId,AccountId,Account_Holder__c from AccountContactRelation where contactId = '0031v00002mCRknAAG' AND AccountId = '0011v00002maZcLAAU';
+updateACR.Account_Holder__c=true;
+update updateACR;
+

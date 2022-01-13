@@ -1,0 +1,33 @@
+// remove all jobs starting with DA_XI*
+List<CronTrigger> crons = [
+    Select Id, CronJobDetail.Name, State, NextFireTime From CronTrigger WHERE CronJobDetail.Name LIKE 'DA_XI%'
+];
+ 
+for (CronTrigger job: crons) {
+    System.abortJob(job.id);
+}
+
+// add jobs for orgunits by config
+List<DA_XI_ActivitySyncSettings__mdt> settings = [
+    SELECT OrgUnit__c, Type__c
+    FROM DA_XI_ActivitySyncSettings__mdt
+    WHERE IsActive__c = TRUE
+];
+ 
+for (DA_XI_ActivitySyncSettings__mdt setting : settings) {
+    if(setting.Type__c == 'ER2S') {
+        new Job(
+            'DA_XI_ActivitySync_' + setting.OrgUnit__c,
+            new DA_XI_ActivitySyncJob(setting.OrgUnit__c)
+        ).startNow().afterMinutes(15).repeatForever().schedule();
+    } else {
+        new Job(   
+            'DA_XI_ActivitySync_' + setting.OrgUnit__c,
+             new DA_XI_ProcessManager.SyncExternalActivtiesWorker(setting.OrgUnit__c)
+        ).startNow().afterMinutes(15).repeatForever().schedule();
+    }
+}
+ 
+new Job('DA_XI_CloseCaseSync', new DA_XI_CaseSyncJob()).startNow().afterMinutes(15
+
+).repeatForever().schedule();

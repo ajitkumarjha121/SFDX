@@ -1,0 +1,4 @@
+Setup an environment
+Import the collection
+Update params
+GET 1. generateTokenB2wgin > Send

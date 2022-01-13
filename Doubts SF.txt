@@ -1,0 +1,28 @@
+Platform Events
+	Created for external system to produce and internal system (SF only) to consume.
+	Terms: Event Bus, Subscriber, Publish
+
+Difference between @Future and Queueable Apex
+
+Invoking apex from Process Builder
+	
+Outbound Message workflow action
+	Outbound Message can be created with external systems endpoint
+
+Why there is "Without Sharing" keyword even its by default used?
+
+Flows Types:
+	Autolaunched Flows (No Trigger) – Autolaunched Flows (No Trigger) doesn’t need user interaction. Autolaunched Flows launches when invoked by supports Processes, custom apex classes, Rest 				        APi, web tabs, custom button or custom links and visual force pages. This Autolaunched Flows runs in the background.
+	Record-Triggered Flows – Record trigger flow launches when a record is created, updated or deleted. This Record-Triggered Flows runs in the background
+
+Trigger Handler(Service and Helper Call), Service(Checks and Logics) and Helper/Provider(SOQL and DML Operations)
+
+Public Groups and Queue
+Public Group:
+If you want to share some information in your organization among some users, so we make public Group.Public Group is the group of some selected users,then we can share information or we assign some work to group.
+
+Queues:
+In our daily life we can take example of Call Centre to understand Queues.There are many Customer Care Executive in a call centre and many customers call at a time and one executive can talk to one customer at one time,so other customer's calls are kept in queues.Same thing is there in salesforce like:
+Each user should assigned to at least one lead and same number of leads.
+That means user need to handle assigned lead individually and all users in organization should assigned with same number of leads, in this case we can define users in organization as Queue and assign them one by one and in same number using round robin lead assignment.
+

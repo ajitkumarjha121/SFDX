@@ -1,0 +1,87 @@
+@isTest
+private class PDFGenrat_Test {
+
+    static testMethod void TestConfigurator() {
+        Boolean pricebookRefresh;
+        
+        Account accrec = new Account(Name = 'ajit', BillingStreet = 'EC2', BillingCity = 'Bangalore', BillingState = 'Karnataka', BillingPostalCode = '560100', BillingCountry='india');
+        insert accrec;
+        
+        //opportunity record test
+        List<Opportunity> listOppRecord = new List<Opportunity>();
+        Opportunity opprec = new Opportunity(AccountId = accrec.Id,Name = 'ajit', Status__c = 'Open', StageName = 'Prospecting', CloseDate = system.today());
+        insert opprec;
+        
+        Test.startTest();
+        listOppRecord.add(opprec);
+        
+        
+        //insert a new product
+        Product2 p = new product2(name='x',Family = 'test');
+        insert p;
+        
+        //Setup Standard Pricebook with PricebookEntry records
+        Id stdPriceBookId = Test.getStandardPricebookId();
+        
+        PricebookEntry pbe1 = new PricebookEntry(pricebook2id=stdPriceBookId, product2id=p.id, unitprice=1.0, isActive=true);
+        insert pbe1;
+        
+        //Setup Standard Pricebook with PricebookEntry records 
+        PriceBook2 pBook = new PriceBook2(name = 'Test', isActive = true);
+        insert pBook;
+            
+        PricebookEntry pbe = new PricebookEntry(PriceBook2Id = pBook.id, UseStandardPrice = false, 
+                                                    Product2Id = p.id, UnitPrice = 0, 
+                                                    isActive = true);
+        insert pbe;
+        
+        List<OpportunityLineItem> listOpplineRecord = new List<OpportunityLineItem>();
+        OpportunityLineItem opplinerec = new OpportunityLineItem(PricebookEntryId = pbe.id, CGM_Per_Unit_Doll_Disc__c = 10, CGM_Dealer_Price_Per_Unit__c = 22, 
+                                                                 Quantity = 3, CGM_Escalator_Per_Unit__c = 11,TotalPrice=500,
+                                                                 Quote_Comments__c = 'testcmnt', Planned_RTS_Date__c = date.today(), Status__c = 'open', 
+                                                                 Opportunityid = opprec.id , Show_on_Quote__c = true);
+        insert opplinerec;
+        listOpplineRecord.add(opplinerec);
+        
+        //Mining_Escalator_Data__c record test
+        List<Mining_Escalator_Data__c> miningEscalatorsDataRecord = new List<Mining_Escalator_Data__c>();
+        Mining_Escalator_Data__c miningescrec= new Mining_Escalator_Data__c(Rate__c= 2, Model__c = '789D', Date__c = date.today(), Price_Book__c = 'July 2018 Mining Price Book');
+        insert miningescrec;
+        miningEscalatorsDataRecord.add(miningescrec);
+        
+        PageReference pageRef = Page.Quote;
+        Test.setCurrentPage(pageRef);
+        ApexPages.StandardController sc = new ApexPages.StandardController(opprec);
+        PDFGenratController testPDFCt = new PDFGenratController(sc);
+        testPDFCt.PdfGeneration();
+        testPDFCt.savePdf();
+         
+        PDFGenratController.OpportunityLineItemWrapper pdfwrap = new PDFGenratController.OpportunityLineItemWrapper();
+        pdfwrap.escalator = 1.2;
+        pdfwrap.comments = 'hello test';
+
+        Test.stopTest();
+    }
+     static testMethod void TestConfigurator1() {
+         Boolean pricebookRefresh;
+        
+        //opportunity record test 
+        List<Opportunity> listOppRecord = new List<Opportunity>();
+        Opportunity opprec = new Opportunity(Name = 'ajit', Status__c = 'Open', StageName = 'Prospecting', CloseDate = system.today() ,QuoteVersion__c = 10);
+        insert opprec;
+        Test.startTest();
+        listOppRecord.add(opprec);
+        
+        Account accrec = new Account(Name = 'ajit', BillingStreet = 'EC2', BillingCity = 'Bangalore', BillingState = 'Karnataka', BillingPostalCode = '560100', BillingCountry='india');
+        insert accrec;
+         
+        PageReference pageRef = Page.Quote;
+        Test.setCurrentPage(pageRef);
+        ApexPages.StandardController sc = new ApexPages.StandardController(opprec);
+        PDFGenratController testPDFCt = new PDFGenratController(sc);
+        testPDFCt.PdfGeneration();
+        testPDFCt.savePdf();
+
+        Test.stopTest();
+    }
+}

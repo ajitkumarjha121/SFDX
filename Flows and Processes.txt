@@ -1,0 +1,21 @@
+Community user login flow:
+OAuth Connected Apps: Digital Attacker Front end Via CIAM Prod which shows configured for working users, that is because app is configured in connections such a way, whenever user login or reset password first time, OAuth Connected Apps is configured automatically.
+Password reset is done by CIAM. Salesforce doesn't trigger any password reset for new users. 
+So its not a blocker for the user to login.
+
+Smoke test:
+BCR File: XML file which contains complete details about customers like First Name, Last Name, DOB, Email, Address Location, Type of product(Gas or Electricty)
+Verivox one
+
+Customer creation Flow:
+    File is manually placed to SFTP server(using Postman).
+    Mulesoft System picks the file from SFTP Server and Process it.
+    Once file is processed, BCR file gets created in Salesforce.  
+    Then customer is created from CIAM
+    finally successfully BCR created with correct customer details , 
+    And customer contract also created with all corresspondence letter.
+
+DA_EditContactWrapper
+DA_EditContactComponentController
+
+BugFix: Directly to PreProd and Prod.

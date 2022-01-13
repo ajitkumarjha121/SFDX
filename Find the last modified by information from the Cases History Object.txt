@@ -1,0 +1,40 @@
+List<CaseHistory> lstCaseHistory = [SELECT CreatedDate, CaseId,CreatedById FROM CaseHistory WHERE CaseId IN ('5001v00001KbujxAAB',
+'5001v00001YpBVEAA3',
+'5001v00001Ijk9DAAR',
+'5001v00001DicYHAAZ',
+'5001v00001Zd3KyAAJ',
+'5001v00001PcRCVAA3',
+'5001v00001PcfpQAAR',
+'5001v00001GxzkuAAB',
+'5001v00001Gxzy3AAB',
+'5001v00001YpSs2AAF',
+'5001v00001GK8CrAAL',
+'5001v00001GK8LUAA1',
+'5001v00001ad6gEAAQ',
+'5001v00001ad6tsAAA',
+'5001v00001RnNe5AAF',
+'5001v00001Y47L4AAJ',
+'5001v00001Y494DAAR',
+'5001v00001Rngn9AAB',
+'5001v00001Y46OtAAJ',
+'5001v00001Y4AW1AAN',
+'5001v00001Y4AggAAF',
+'5001v00001Y4AUYAA3',
+'5001v00001Y4AGSAA3',
+'5001v00001Y49lTAAR',
+'5001v00001Y479bAAB',
+'5001v00001Y4AS0AAN',
+'5001v00001Y49lUAAR')];
+map<Id,string> mapCaseIdWithOwner = new map<Id,string>();
+list<Case> lstCase = new list<Case>();
+//Case[] lstCase= new Case[] {};
+for(CaseHistory itr:lstCaseHistory)
+{
+	if(!mapCaseIdWithOwner.containsKey(itr.CaseId))
+	{
+		mapCaseIdWithOwner.put(itr.CaseId, itr.CreatedById);
+		lstCase.add(new Case(Id = itr.CaseId, OwnerId = itr.CreatedById));	
+	}
+}
+System.debug(lstCase);
+//update lstCase;

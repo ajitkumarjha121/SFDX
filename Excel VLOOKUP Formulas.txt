@@ -1,0 +1,15 @@
+To Compare and Update with correct mapping:
+
+=VLOOKUP(C2,Sheet2!B2:E6,4,FALSE)
+
+C2 = Value which you want to compare
+Sheet2!B2:E6: array you want to search 
+4: which column value you want to retrieve
+False - exact match
+
+To add quotes and comma for a column.
+
+=CONCAT("'",A1,"'",",")
+
+
+=VLOOKUP(C5,A:B,2,0)

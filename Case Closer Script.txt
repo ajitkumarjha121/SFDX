@@ -1,0 +1,13 @@
+// get the impacted case to be closed
+list<case> caseList = [select id from case 
+                       where type='Failed Verification' 
+                       and status !='Closed' 
+                       and CreatedDate <= 2021-03-31T00:00:00Z  
+                       and CreatedDate >= 2020-12-05T00:00:00Z limit 100 ];
+
+//Closing the cases 
+for(case caseRecord : caseList){
+    caseRecord.status='Closed';
+}
+    
+update caseList; 

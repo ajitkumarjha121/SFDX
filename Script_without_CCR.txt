@@ -1,0 +1,99 @@
+//BulkModule customer:
+
+List<Asset> listAser=[select id, ACCOUNTID,CONTACTID,Customer_Contract_Parent_Assets__c,NE__BILLING_ACCOUNT__C, NE__SERVICE_ACCOUNT__C FROM Asset where id = '02i1v00000Rk1wvAAB'];
+system.debug('WTR - listAser: '+listAser);
+
+//MiG Assert updating the from bulk
+String AccountIdOLdMIG;
+Asset listAserUpdateBulkModuleMIG=[select id, ACCOUNTID,CONTACTID,Customer_Contract_Parent_Assets__c,NE__BILLING_ACCOUNT__C, NE__SERVICE_ACCOUNT__C FROM Asset where id = '02i1v00000XjTiTAAV'];
+
+AccountIdOLdMIG=listAserUpdateBulkModuleMIG.ACCOUNTID;
+String ContactIdOLdMIG=listAserUpdateBulkModuleMIG.CONTACTID;
+
+system.debug('BeforeUpdate - listAserUpdateBulkModuleMIG: '+listAserUpdateBulkModuleMIG);
+
+
+listAserUpdateBulkModuleMIG.ACCOUNTID=listAser[0].ACCOUNTID;
+listAserUpdateBulkModuleMIG.CONTACTID=listAser[0].CONTACTID;
+listAserUpdateBulkModuleMIG.Customer_Contract_Parent_Assets__c=listAser[0].Customer_Contract_Parent_Assets__c;
+listAserUpdateBulkModuleMIG.NE__BILLING_ACCOUNT__C=listAser[0].NE__BILLING_ACCOUNT__C;
+
+system.debug('After Update - listAserUpdateBulkModuleMIG: '+listAserUpdateBulkModuleMIG);
+
+
+List<NE__Service_Point__c> listPSPUpdated= new List<NE__Service_Point__c>(); 
+
+List<NE__Service_Point__c> ListNeServcie=[Select id, NE__ACCOUNT__C FROM NE__Service_Point__c where NE__Account__c=:AccountIdOLdMIG]; 
+
+for(NE__Service_Point__c seOb:ListNeServcie) {
+                
+                seOb.NE__ACCOUNT__C=listAser[0].ACCOUNTID;
+                listPSPUpdated.add(seOb);
+}  
+system.debug('listPSPUpdated: '+ListNeServcie.size());
+system.debug('listPSPUpdated: '+listPSPUpdated);
+            
+//BUlk Case
+List<Case> listBulkCase=[select id, ACCOUNTID, CONTACTID,EntitlementId FROM Case where contactId =: listAser[0].CONTACTID];
+
+//MIG case
+List<Case> listMigCase=[select id, ACCOUNTID, CONTACTID,EntitlementId FROM Case where contactId =:ContactIdOLdMIG];
+
+list<Case> updateCaseList= new list<Case>();  
+
+  for (Case migCase:listMigCase) {
+  
+        migCase.ACCOUNTID=listAser[0].ACCOUNTID;
+        migCase.CONTACTID=listAser[0].CONTACTID;
+        migCase.EntitlementId=listBulkCase[0].EntitlementId;
+		updateCaseList.add(migCase);
+  }
+
+
+system.debug('Case: '+listMigCase.size());
+system.debug('updateCaseList: '+updateCaseList);
+
+
+List<Correspondence__c> coresList=[select id, Contact__c,ACCOUNT__C FROM Correspondence__c where Contact__c =: ContactIdOLdMIG];
+
+List<Correspondence__c> ListUpdateCores= new List<Correspondence__c>(); 
+
+for(Correspondence__c crObj:coresList) {
+                
+                crObj.ACCOUNT__C=listAser[0].ACCOUNTID;
+                
+                crObj.Contact__c=listAser[0].CONTACTID;
+                ListUpdateCores.add(crObj);
+}              
+system.debug('coresList: '+coresList.size());
+system.debug('ListUpdateCores:'+ListUpdateCores);
+
+List<Customer_Verification_Form__c> custVeriList = [select id, Account__c  from Customer_Verification_Form__c where Account__c =: AccountIdOLdMIG];
+List<Customer_Verification_Form__c> updateCustVeriList = new List<Customer_Verification_Form__c>();
+
+for(Customer_Verification_Form__c custObj: custVeriList){
+                                custObj.Account__c = listAser[0].ACCOUNTID;
+                                updateCustVeriList.add(custObj);
+}
+
+system.debug('custVeriList: '+custVeriList.size());
+system.debug('updateCustVeriList: '+updateCustVeriList);
+
+List<Entitlement> entlList = [select id, AccountId from Entitlement where AccountId =: AccountIdOLdMIG];
+List<Entitlement> updateEntlList = new List<Entitlement>();
+
+for(Entitlement custObj: entlList){
+                                custObj.AccountId  = listAser[0].ACCOUNTID;
+                                updateEntlList.add(custObj);
+}
+
+system.debug('entlList: '+entlList.size());
+system.debug('updateEntlList: '+updateEntlList);
+
+update listAserUpdateBulkModuleMIG;
+update listPSPUpdated;
+update updateCaseList;
+update coresList;
+update updateCustVeriList;
+update updateEntlList;
+

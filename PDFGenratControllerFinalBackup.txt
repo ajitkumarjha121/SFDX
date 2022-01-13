@@ -1,0 +1,262 @@
+public class PDFGenratController {
+    public Opportunity oppRecord;
+    public String customerName {get;set;}
+    public String customerAddress {get; set;}
+    public String customerCountry {get; set;}
+    public String customerLocation {get; set;}
+    public String dealerLocation {get;set;}
+    public String signature {get; set; }
+    public Decimal nextQuoteVersion {get; set;}
+    public PriceBook2 priceBook {get; set;}
+    public Boolean attachment;
+    public Boolean error;
+    private Boolean pricebookRefresh;
+    public List<Mining_Escalator_Data__c> miningEscalatorData{set;get;}
+    public List<OpportunityLineItemWrapper> quoteLineItemsOpen {set; get; }
+    public List<OpportunityLineItemWrapper> quoteLineItems {set; get; }
+    
+    public PDFGenratController(ApexPages.StandardController controller){
+        
+        String refresh = ApexPages.currentPage().getParameters().get('pricebookRefresh');
+        pricebookRefresh = (refresh != null && refresh.toLowerCase() == 'true');
+        attachment  = (ApexPages.currentPage().getParameters().get('attachment') != null);
+        
+        oppRecord = [select id, Name, Status__c,Account.id,CurrencyIsoCode, Pricebook2Id, Probability, Account.RecordType.Name, 
+                     Dealer__r.Pricebook_Region__c,QuoteVersion__c, Dealer__r.BillingCity, Dealer__r.BillingState, 
+                     Dealer__r.BillingPostalCode, Dealer__r.BillingCountry, Owner.name, Owner.phone, Owner.email, 
+                     QuoteNumber__c, Record_Number__c, CGM_Total_Sales_Price__c, Pricebook2.isActive from Opportunity where Id=: controller.getId()];
+        if(oppRecord.QuoteVersion__c==null){
+            oppRecord.QuoteVersion__c=0;
+            //for Quote Version on PDF
+            nextQuoteVersion = 1;
+        }
+        else{
+            nextQuoteVersion = oppRecord.QuoteVersion__c + 1;
+            error = false;
+        }
+    }
+    
+    public PageReference PdfGeneration(){
+       
+      /*  if(pricebookRefresh && quoteNotAttached()){  
+            Savepoint savept = Database.setSavepoint();
+            try {
+                    if(oppRecord.Pricebook2Id == NULL || (oppRecord.Pricebook2Id != NULL && oppRecord.Pricebook2.isActive == FALSE)) {
+                                        
+                    priceBook = CGMPricebookRefresh.selectPriceBookForOpportunity(oppRecord);
+                    if(priceBook != NULL && priceBook.Id != NULL) {
+                        oppRecord.Pricebook2Id = priceBook.id;
+                        update oppRecord;
+                    }else {
+                        ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.FATAL, 'No pricebooks were found that could be assigned to this Opportunity.'));
+                        return NULL;
+                    }
+                }else {
+                    priceBook = [SELECT name, id FROM PriceBook2 WHERE id = :oppRecord.Pricebook2Id];
+                }
+            } catch(Exception ex) {
+                error=true;
+                Database.rollback(savept);
+            }
+        } */
+        
+        Account account = null;
+        if(oppRecord.AccountId != null) {
+            account = [Select Id, Name, ParentId, BillingStreet, BillingCity, BillingState, BillingPostalCode, BillingCountry, Global_Account__c From Account where Id = :oppRecord.AccountId];
+            if(account.ParentId != null) {
+                account = [Select Id, Name, BillingStreet, BillingCity, BillingState, BillingPostalCode, BillingCountry, Global_Account__c From Account Where Id = :account.ParentId];
+            }            
+        }
+        
+        customerName = (account != null) ? account.Name : '';
+        customerAddress = (account != null) ? account.BillingStreet : '';
+        customerLocation = (account != null) ? createLocation(account.BillingCity, account.BillingState, account.BillingPostalCode) : '';
+        customerCountry = (account != null) ? account.BillingCountry : '';
+       
+        if(oppRecord.Dealer__c != null) {
+            dealerLocation = createLocation(oppRecord.Dealer__r.BillingCity, oppRecord.Dealer__r.BillingState, oppRecord.Dealer__r.BillingPostalCode);
+        } else {
+            dealerLocation = '';
+        }
+        signature = createSignature(oppRecord.Owner.name, oppRecord.Owner.Phone, oppRecord.Owner.email);
+        
+        //query to fetch all the opportunity product details for the opportunity
+        Set<Id> cgmIds = new Set<Id>();
+        for(Profile p:[select Id from Profile where Name like '%CGM%'])
+            cgmIds.add(p.Id);
+        
+        Map<Id, OpportunityLineItem> oppLineItemPerId = new Map<Id, OpportunityLineItem>();
+        Set<Id> idSet = new Set<Id>();
+        Set<Id> lineItems = new Set<Id>();
+        Map<Id,Id> oliPrcBkMap =new Map<Id,Id>();
+        Map<Id,Id> optyMap =new Map<Id,Id>();
+        quoteLineItems = new List<OpportunityLineItemWrapper>();
+        quoteLineItemsOpen = new List<OpportunityLineItemWrapper>();
+        
+        for(OpportunityLineItem  oppLineItem : [Select id, PricebookEntryId, CGM_Net_Price_Unit__c,CGM_Per_Unit_Doll_Disc__c,CGM_Dealer_Price_Per_Unit__c,Product_Name__c,Quantity,CGM_Total_Value__c,CGM_Product_Group__c, CGM_Escalator_Per_Unit__c, Quote_Comments__c, Show_on_Quote__c, Planned_RTS_Date__c, Status__c from OpportunityLineItem where Opportunityid=: oppRecord.Id And Show_on_Quote__c = true And Status__c = 'Open']) 
+        {
+            String pricebookentryid1 = oppLineItem.PricebookEntryId;
+            oppLineItemPerId.put(pricebookentryid1, oppLineItem);
+            Decimal escalator = 0;
+            OpportunityLineItemWrapper wrapper = new OpportunityLineItemWrapper();
+            wrapper.item=oppLineItem;
+            escalator = oppLineItem.CGM_Escalator_Per_Unit__c ;
+            wrapper.escalator=escalator;
+            wrapper.comments=oppLineItem.Quote_Comments__c;
+            quoteLineItemsOpen.add(wrapper);
+        }
+        //Gettting pricebookentry detail
+        Map<Id, PricebookEntry> pbeMap = new Map<Id, PricebookEntry>([select Id, Name, Product2Id, Pricebook2Id, Product2.Name, Pricebook2.Name from PricebookEntry where Id in: oppLineItemPerId.keyset()]);
+        set<String> productNames = new Set<String>();
+        
+        Set<String> pricebookNames = new Set<String>();
+     //   Map<String,String> MapProductNames = new Map<String,String>();
+     //   Map<String,String> MapPricebookNames = new Map<String,String>();
+        
+        //Getting model and pricebookname from PricebookEntry
+        for(PricebookEntry pbe:pbeMap.values()) 
+        {
+            productNames.add(pbe.Product2.Name);
+            pricebookNames.add(pbe.Pricebook2.Name);
+         //   MapProductNames.put(pbe.Product2.Name,pbe.Product2.Name);
+         //   MapPricebookNames.put(pbe.Pricebook2.Name,pbe.Pricebook2.Name);
+        }
+     //   system.debug('MapProductNames>>'+MapProductNames);
+     //   system.debug('MapPricebookNames>>'+MapPricebookNames);
+        system.debug('pbeMap>>> '+pbeMap+'productNames Set>>> '+productNames+'pricebookNames set>>> '+pricebookNames);
+        miningEscalatorData  = new List<Mining_Escalator_Data__c>();
+        set<id> setproductentryid = new set<id>();
+        
+        Map<String,Mining_Escalator_Data__c> allMiningData = new Map<String,Mining_Escalator_Data__c>();
+     //   for(Mining_Escalator_Data__c all:[select Rate__c, Model__c, Date__c, Price_Book__c from Mining_Escalator_Data__c where Model__c in: productNames]){
+     //       allMiningData.put(all.Model__c,all);        
+     //   }
+        system.debug('all::::'+allMiningData);
+     //   List<Mining_Escalator_Data__c> allMiningEscalatorsData = [select Rate__c, Model__c, Date__c, Price_Book__c from Mining_Escalator_Data__c where Model__c in: MapProductNames.keyset() and Price_Book__c in: MapPricebookNames.keyset()];
+        List<Mining_Escalator_Data__c> allMiningEscalatorsData = [select Rate__c, Model__c, Date__c, Price_Book__c from Mining_Escalator_Data__c where Model__c in: productNames and Price_Book__c in: pricebookNames ORDER BY Model__c];
+        
+        system.debug('allMiningEscalatorsData>>'+allMiningEscalatorsData);
+        for(Mining_Escalator_Data__c esndata : allMiningEscalatorsData){
+            for(PricebookEntry pb1:pbeMap.values()){
+                if(pb1.Product2.Name==esndata.Model__c && pb1.Pricebook2.Name==esndata.Price_Book__c)
+                {
+                    system.debug('1st stage is getting inside>>>');
+                    if(oppLineItemPerId.containsKey(pb1.id)) 
+                    {
+                        system.debug('2nd stage is getting inside>>>');
+                        OpportunityLineItem oppLineItem = oppLineItemPerId.get(pb1.id);
+                        system.debug('2nd stage is getting inside>>>'+oppLineItem);
+                        if(oppLineItem.Planned_RTS_Date__c >= esndata.Date__c && oppLineItem.Planned_RTS_Date__c.YEAR() == esndata.Date__c.YEAR()) {
+                             system.debug('3rd stage is getting inside>>>');
+                           //  miningEscalatorData.add(esndata);
+                              allMiningData.put(esndata.Model__c+esndata.Price_Book__c+esnData.Date__c,esndata);
+                        }
+                    }
+                }
+            }
+        } 
+           
+        miningEscalatorData.addAll(allMiningData.values());        
+        return savePdf();
+    }
+    
+    public PageReference savePdf() {
+     /*   if(error == true) {
+            PageReference pr = Page.QuoteGenerationError;
+            if(pricebookRefresh) {
+                pr.getParameters().put('refreshError', 'true');
+            }
+            pr.setRedirect(true);
+            return pr;
+        } */
+        if(attachment == false) {
+           // attach the pdf to the oppty
+            if(quoteNotAttached()) {
+                // add parent id to the parameters for standardcontroller
+                PageReference pdf = Page.Quote;
+                pdf.getParameters().put('id',oppRecord.Id);
+                pdf.getParameters().put('attachment','true'); 
+                
+                // create the new attachment
+                Attachment attach = new Attachment();
+             
+                // add the user entered name
+                attach.IsPrivate = false;
+                attach.ParentId = oppRecord.Id;
+
+                String attachmentName = 'Opp ID: ' + oppRecord.Record_Number__c + ' - Quote #: ' + oppRecord.QuoteNumber__c + ' - Version: ' + nextQuoteVersion + '.pdf';
+                attach.Name = attachmentName;
+                
+                // the contents of the attachment
+                Blob body = null;
+                if(!Test.IsRunningTest())
+                    body = pdf.getContent();
+                else
+                    body = blob.valueOf('Test');
+                attach.Body = body;
+                              
+                Database.SaveResult linkAttach = Database.insert(attach,true);    // Saving PDF Quote files to Notes and Attachments
+                if(linkAttach.isSuccess())    
+                {                   
+                    oppRecord.QuoteVersion__c++;  // Incrementing Quote Version and updating on the Opportunity page
+                    Utilities.stopRecursion();    //5-29-15: We are only updating the quote version so no need to invoke opp triggers; See ENT-00003986.
+                    update oppRecord;
+                    Utilities.allowTorun();
+                    
+                    //checking to see if the latest quote is older then 60 days 
+                    DateTime quoteTime = DateTime.now();
+                    Date validDate = quoteTime.addDays(60).date();
+                                        
+                    Opportunity_Quote_Tracking__c tracking = new Opportunity_Quote_Tracking__c();
+                    tracking.Opportunity__c = oppRecord.Id;
+                    tracking.Quote_Create_Date__c = quoteTime;
+                    tracking.QuoteNumber__c = oppRecord.QuoteNumber__c;
+                    tracking.QuoteEndDate__c = validDate;
+                    tracking.QuoteVersion__c = oppRecord.QuoteVersion__c;
+                    insert tracking;
+                
+                    //add quote tracking information
+                    List<OpportunityLineItem> historyItems = new List<OpportunityLineItem>();
+                    for(OpportunityLineItemWrapper lineItem : quoteLineItemsOpen) {
+                        OpportunityLineItem history = lineItem.item;
+                       // history.Opportunity_Quote_Tracking__c = tracking.Id;
+                        historyItems.add(history);
+                    }
+                    update historyItems;
+                } 
+            }
+        }
+        return null; 
+    }
+    private String createSignature(String name, String phone, String email) {
+        return createLocation(name, phone, email, ', ');
+    }
+    
+    private String createLocation(String city, String state, String zip) {
+        return createLocation(city, state, zip, ' ');
+    }
+    private String createLocation(String city, String state, String zip, String delimiter) {
+        String location = city;
+        if(state != null && state != '') {
+            location += (location != '') ? ', ' : '';
+            location += state;
+        }
+        if(zip != null && zip != '') {
+            location += (location != '') ? delimiter : '';
+            location += zip;
+        }
+        return location;
+    }
+    
+    private boolean quoteNotAttached(){
+        String attachmentName = 'Opp ID: ' + oppRecord.Record_Number__c + ' - Quote #: ' + oppRecord.QuoteNumber__c + ' - Version: ' + nextQuoteVersion + '.pdf';
+        List<Attachment> oldAttachs = [select Id, Name, ParentId from Attachment where ParentId =: oppRecord.Id and Name =: attachmentName];
+        return (oldAttachs.size() == 0); 
+    }
+    
+    public class OpportunityLineItemWrapper {
+        public OpportunityLineItem item {get; set; }
+        public Decimal escalator {get; set; } 
+        public String comments {get; set; } 
+    }   
+}
